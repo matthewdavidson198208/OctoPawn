@@ -35,13 +35,13 @@
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\Sprites\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Content\black_pawn.png">
+    <None Update="Content\Sprites\black_pawn.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="Content\Sprites\black_pawn.sf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Content\white_pawn.png">
+    <None Update="Content\Sprites\white_pawn.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -1,0 +1,12 @@
+{
+  "textureAtlas": {
+    "texture": "white_pawn.png",
+    "regionWidth": 200,
+    "regionHeight": 400
+  },
+  "cycles": {
+    "animation0": {
+      "frames": [1]
+    }
+  }
+}
