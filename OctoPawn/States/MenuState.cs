@@ -44,7 +44,7 @@ namespace OctoPawn.States
                 },
                 new Button(this, (int)game.WidthX(200), (int)game.HeightY(50), buttonFont, Color.White)
                 {
-                  Text = "Instructions",
+                  Text = "How To",
                   Position = new Vector2(500, game.HeightY(360)),
                   Click = new EventHandler(Button_Instructions_Clicked),
                   Layer = 0.1f
@@ -66,7 +66,7 @@ namespace OctoPawn.States
 
         private void Button_Instructions_Clicked(object sender, EventArgs args)
         {
-            //game.ChangeState(new InstructionsState(game, content));
+            game.ChangeState(new InstructionsState(game, content));
         }
 
         private void Button_Quit_Clicked(object sender, EventArgs args)
