@@ -61,7 +61,7 @@ namespace OctoPawn.States
 
         private void Button_Player_Clicked(object sender, EventArgs args)
         {
-            //game.ChangeState(new GameState(game, content));
+            game.ChangeState(new GameState(game, content));
         }
 
         private void Button_Instructions_Clicked(object sender, EventArgs args)
