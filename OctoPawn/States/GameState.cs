@@ -188,13 +188,15 @@ namespace OctoPawn.States
                 if (checkAllyWhitePawn)
                     return false;
 
-                var checkEnemySpotInFront = blackPawns.Exists(x => x.Item2.Row == pawn.Row - 1 && x.Item2.Column == pawn.Column);
-                var checkCaptureEnemy = whitePawns.Exists(x => x.Item2.Row == highlight.Row && Math.Abs(x.Item2.Column - highlight.Column) == 1);
-                var columnDif = pawn.Row - highlight.Row;
                 if (pawn.Row - 1 != highlight.Row)
                     return false;
-                if ((pawn.Column != highlight.Column && checkEnemySpotInFront) ||
-                    (Math.Abs(columnDif) != 1 && !checkCaptureEnemy))
+
+                var columnDif = pawn.Column - highlight.Column;
+                if (Math.Abs(columnDif) > 1)
+                    return false;
+
+                var checkEnemyBlackPawn = blackPawns.Exists(x => x.Item2.Row == highlight.Row && x.Item2.Column == highlight.Column);
+                if (pawn.Row - 1 == highlight.Row && Math.Abs(columnDif) == 1 && !checkEnemyBlackPawn)
                     return false;
             }
             else
@@ -203,14 +205,15 @@ namespace OctoPawn.States
                 if (checkAllyBlackPawn)
                     return false;
 
-
-                var checkEnemySpotInFront = whitePawns.Exists(x => x.Item2.Row == pawn.Row + 1 && x.Item2.Column == pawn.Column);
-                var checkCaptureEnemy = whitePawns.Exists(x => x.Item2.Row == highlight.Row && Math.Abs(x.Item2.Column - highlight.Column) == 1);
-                var columnDif = pawn.Row - highlight.Row;
                 if (pawn.Row + 1 != highlight.Row)
                     return false;
-                if ((pawn.Column != highlight.Column && checkEnemySpotInFront) ||
-                    (Math.Abs(columnDif) != 1 && !checkCaptureEnemy))
+
+                var columnDif = pawn.Column - highlight.Column;
+                if (Math.Abs(columnDif) > 1)
+                    return false;
+
+                var checkEnemyWhitePawn = whitePawns.Exists(x => x.Item2.Row == highlight.Row && x.Item2.Column == highlight.Column);
+                if (pawn.Row + 1 == highlight.Row && Math.Abs(columnDif) == 1 && !checkEnemyWhitePawn)
                     return false;
             }
             
