@@ -128,11 +128,6 @@ namespace OctoPawn.Components
             }
         }
 
-        public void CheckColor(Color color)
-        {
-            throw new NotImplementedException();
-        }
-
         public void OnCollision(CollisionEventArgs collisionInfo)
         {
             throw new NotImplementedException();

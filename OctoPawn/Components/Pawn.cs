@@ -37,8 +37,11 @@ namespace OctoPawn.Components
         public EventHandler Click;
         public bool Clicked { get; private set; }
         public int ID { get; private set; }
+        public bool IsWhite { get; set; }
+        public int Row { get; set; }
+        public int Column { get; set; }
 
-        public Pawn(IServiceProvider serviceProvider, Vector2 position, GameState gameState, bool isWhite, int id)
+        public Pawn(IServiceProvider serviceProvider, Vector2 position, GameState gameState, bool isWhite, int id, int row, int column)
         {
             content = new ContentManager(serviceProvider, "Content");
             _gameState = gameState;
@@ -46,8 +49,11 @@ namespace OctoPawn.Components
 
             Bounds = new RectangleF(position.X - 25, position.Y - 50, 50, 100);
             ID = id;
+            Row = row;
+            Column = column;
 
             SpriteSheet ss = null;
+            IsWhite = isWhite;
             if(isWhite)
                 ss = Content.Load<SpriteSheet>("Sprites/white_pawn.sf", new JsonContentLoader());
             else 
@@ -97,11 +103,5 @@ namespace OctoPawn.Components
         {
             //throw new NotImplementedException();
         }
-        public void CheckColor(Color color)
-        {
-            //throw new NotImplementedException();
-        }
-
-      
     }
 }

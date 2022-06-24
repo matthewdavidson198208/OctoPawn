@@ -76,8 +76,8 @@ namespace OctoPawn.States
             returnButton.Draw(spriteBatch);
 
             var scale = 0.5f;
-            spriteBatch.Draw(whitePawn, new Vector2(x + game.WidthX(650), game.HeightY(500)), 0, new Vector2(scale, scale));
-            spriteBatch.Draw(blackPawn, new Vector2(x + game.WidthX(800), game.HeightY(500)), 0, new Vector2(scale, scale));
+            spriteBatch.Draw(whitePawn, new Vector2(x + game.WidthX(650), game.HeightY(450)), 0, new Vector2(scale, scale));
+            spriteBatch.Draw(blackPawn, new Vector2(x + game.WidthX(800), game.HeightY(450)), 0, new Vector2(scale, scale));
 
             spriteBatch.DrawString(font, "The objective of the game is to get one pawn to the opposite side of the board.\n" +
                 "Pawns move how the normally would in chess,\n" +
@@ -85,10 +85,7 @@ namespace OctoPawn.States
                 "En passant is not allowed.\n" +
                 "If a player has no legal moves, they lose.\n" +
                 "The first player to get one of their pawns to the opposite of the board wins.\n" +
-                "To move a pawn with the mouse, drag and drop the pawn you want to move.\n" +
-                "To move a pawn with the keyboard, press Enter on the pawn you want to move,\n" +
-                "you arrow keys to move to desired space,\n" +
-                "then press Enter again to move pawn to selected space.\n",
+                "To move a pawn with the mouse, drag and drop the pawn you want to move.\n",
                 new Vector2(x + game.WidthX(300), game.HeightY(125)), Color.White, 0,
                 Vector2.Zero, new Vector2(game.WidthX(1.0f), game.HeightY(1.0f)), SpriteEffects.None, 0);
 

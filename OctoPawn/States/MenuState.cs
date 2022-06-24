@@ -109,11 +109,15 @@ namespace OctoPawn.States
         {
             spriteBatch.Begin(SpriteSortMode.FrontToBack);
 
-            var titlePosition = new Vector2(game.WidthX(425), game.HeightY(200));
+            var titlePosition = new Vector2(game.WidthX(425), game.HeightY(100));
             var titleFont = content.Load<SpriteFont>("Basic");
             spriteBatch.DrawString(titleFont, "OctoPawn", titlePosition, Color.White,
                     0, Vector2.Zero, new Vector2(game.WidthX(1.0f), game.HeightY(1.0f)), SpriteEffects.None, 0);
-            
+
+            var developerPosition = new Vector2(game.WidthX(325), game.HeightY(175));
+            spriteBatch.DrawString(titleFont, "Programmed by matt D", developerPosition, Color.White,
+                    0, Vector2.Zero, new Vector2(game.WidthX(1.0f), game.HeightY(1.0f)), SpriteEffects.None, 0);
+
             foreach (var button in _buttons)
                 button.Draw(spriteBatch);
 

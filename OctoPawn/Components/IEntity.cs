@@ -11,6 +11,5 @@ namespace OctoPawn.Components
     {
         public void Update(GameTime gameTime);
         public void Draw(SpriteBatch spriteBatch);
-        public void CheckColor(Color color);
     }
 }
