@@ -17,7 +17,6 @@ namespace OctoPawn.States
 
         private int _selectedButton { get; set; }
 
-
         public MenuState(Game1 game1, ContentManager content1) : base(game1, content1)
         {
         }
@@ -29,12 +28,6 @@ namespace OctoPawn.States
 
             _buttons = new List<IEntity>()
             {
-                //new Sprite(_content.Load<Texture2D>("Background/MainMenu"))
-                //{
-                //  Layer = 0f,
-                //  Position = new Vector2(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width / 2, 
-                //    GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / 2),
-                //},
                 new Button(this, (int)game.WidthX(200), (int)game.HeightY(50), buttonFont, Color.White)
                 {
                   Text = "Play",

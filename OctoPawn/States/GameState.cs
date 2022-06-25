@@ -26,6 +26,18 @@ namespace OctoPawn.States
         private int _selectedSquare;
         private List<HighlightSquare> HighlightSquares { get; set; }
 
+        public enum WhoWins
+        {
+            None,
+            White,
+            Black
+        }
+
+        public WhoWins WhoWon { get; set; }
+
+        private List<IEntity> _buttons;
+
+        private int _selectedButton { get; set; }
 
         public GameState(Game1 game1, ContentManager content1) : base(game1, content1)
         {
@@ -34,6 +46,7 @@ namespace OctoPawn.States
 
         private void Reset()
         {
+            WhoWon = WhoWins.None;
             IsWhitesTurn = IsValidMove = true;
             _selectedSquare = 12;
             _pawnID = -1;
@@ -53,7 +66,33 @@ namespace OctoPawn.States
         {
             Reset();
 
-            for(int i = 0; i < 4; i++)
+            var buttonFont = content.Load<SpriteFont>("Basic");
+            _buttons = new List<IEntity>()
+            {
+                new Button(this, (int)game.WidthX(200), (int)game.HeightY(50), buttonFont, Color.ForestGreen)
+                {
+                  Text = "Retry",
+                  Position = new Vector2(500, 300),
+                  Click = new EventHandler(Button_Retry_Clicked),
+                  Layer = 0.1f
+                },
+                new Button(this, (int)game.WidthX(200), (int)game.HeightY(50), buttonFont, Color.ForestGreen)
+                {
+                  Text = "Return",
+                  Position = new Vector2(500, 360),
+                  Click = new EventHandler(Button_Return_Clicked),
+                  Layer = 0.1f
+                },
+                new Button(this, (int)game.WidthX(200), (int)game.HeightY(50), buttonFont, Color.ForestGreen)
+                {
+                  Text = "Quit",
+                  Position = new Vector2(500, 420),
+                  Click = new EventHandler(Button_Quit_Clicked),
+                  Layer = 0.1f
+                },
+            };
+
+            for (int i = 0; i < 4; i++)
             {
                 var whitePawn = new Pawn(game.Services, new Vector2((125 * i + 295), 570), this, true, i + 4, 3, i)
                 {
@@ -93,16 +132,35 @@ namespace OctoPawn.States
 
         }
 
+        private void Button_Retry_Clicked(object sender, EventArgs args)
+        {
+            LoadContent();
+        }
+
+        private void Button_Return_Clicked(object sender, EventArgs args)
+        {
+            game.ChangeState(new MenuState(game, content));
+        }
+
+        private void Button_Quit_Clicked(object sender, EventArgs args)
+        {
+            game.Exit();
+        }
+
         private MouseState _previousMouse;
         private MouseState _currentMouse;
         private int _pawnID;
         private void onHold(object sender, EventArgs e)
         {
+            if (WhoWon != WhoWins.None)
+                return;
+
             var pawn = sender as Pawn;
             if (pawn.IsWhite != IsWhitesTurn)
                 return;
             if (pawn.ID != _pawnID && _pawnID != -1)
                 return;
+
             _pawnID = pawn.ID;
             _previousMouse = _currentMouse;
             _currentMouse = Mouse.GetState();
@@ -113,7 +171,11 @@ namespace OctoPawn.States
         {
             _previousMouse = _currentMouse;
             _currentMouse = Mouse.GetState();
-            if (_currentMouse.LeftButton == ButtonState.Released && _previousMouse.LeftButton == ButtonState.Pressed)
+            if (CheckIfCantMoveAnymore())
+            {
+
+            }
+            else if (_currentMouse.LeftButton == ButtonState.Released && _previousMouse.LeftButton == ButtonState.Pressed)
             {
                 if(_pawnID != -1)
                 {
@@ -178,10 +240,49 @@ namespace OctoPawn.States
             }
         }
 
+        public bool CheckIfCantMoveAnymore()
+        {
+            var cantMove = true;
+            if (IsWhitesTurn)
+            {
+                foreach(var white in whitePawns)
+                {
+                    var checkBlackInFront = blackPawns.Exists(x => x.Item2.Row == white.Item2.Row - 1 && x.Item2.Column == white.Item2.Column);
+                    var checkBlackOnSides = blackPawns.Exists(x => x.Item2.Row == white.Item2.Row - 1 && 
+                        (x.Item2.Column == white.Item2.Column - 1 || x.Item2.Column == white.Item2.Column + 1));
+                    if (!checkBlackInFront || checkBlackOnSides)
+                    {
+                        cantMove = false;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                foreach (var black in blackPawns)
+                {
+                    var checkWhiteInFront = blackPawns.Exists(x => x.Item2.Row == black.Item2.Row + 1 && x.Item2.Column == black.Item2.Column);
+                    var checkWhiteOnSides = blackPawns.Exists(x => x.Item2.Row == black.Item2.Row + 1 &&
+                        (x.Item2.Column == black.Item2.Column - 1 || x.Item2.Column == black.Item2.Column + 1));
+                    if (checkWhiteInFront || !checkWhiteOnSides)
+                    {
+                        cantMove = false;
+                        break;
+                    }
+                }
+            }
+
+            if (cantMove && IsWhitesTurn)
+                WhoWon = WhoWins.Black;
+            else if (cantMove && !IsWhitesTurn)
+                WhoWon = WhoWins.White;
+
+            return cantMove;
+        }
+
         public bool IsValidMove { get; set; }
         public bool CheckIfValidMove(bool isWhitePawn, Pawn pawn, HighlightSquare highlight)
         {
-            //TODO: Fill logic here
             if (isWhitePawn)
             {
                 var checkAllyWhitePawn = whitePawns.Exists(x => x.Item2.Row == highlight.Row && x.Item2.Column == highlight.Column);
@@ -198,6 +299,20 @@ namespace OctoPawn.States
                 var checkEnemyBlackPawn = blackPawns.Exists(x => x.Item2.Row == highlight.Row && x.Item2.Column == highlight.Column);
                 if (pawn.Row - 1 == highlight.Row && Math.Abs(columnDif) == 1 && !checkEnemyBlackPawn)
                     return false;
+
+                if (pawn.Row - 1 == highlight.Row && Math.Abs(columnDif) == 0 && checkEnemyBlackPawn)
+                    return false;
+
+                //Capture enemy piece if able
+                if (checkEnemyBlackPawn)
+                {
+                    var captureEnemyBlackPawn = blackPawns.FirstOrDefault(x => x.Item2.Row == highlight.Row && x.Item2.Column == highlight.Column);
+                    blackPawns.Remove(captureEnemyBlackPawn);
+                }
+
+                //Check winning condition
+                if (highlight.Row == 0)
+                    WhoWon = WhoWins.White;
             }
             else
             {
@@ -215,6 +330,20 @@ namespace OctoPawn.States
                 var checkEnemyWhitePawn = whitePawns.Exists(x => x.Item2.Row == highlight.Row && x.Item2.Column == highlight.Column);
                 if (pawn.Row + 1 == highlight.Row && Math.Abs(columnDif) == 1 && !checkEnemyWhitePawn)
                     return false;
+
+                if (pawn.Row + 1 == highlight.Row && Math.Abs(columnDif) == 0 && checkEnemyWhitePawn)
+                    return false;
+
+                //Capture enemy piece if able
+                if (checkEnemyWhitePawn)
+                {
+                    var captureEnemyWhitePawn = whitePawns.FirstOrDefault(x => x.Item2.Row == highlight.Row && x.Item2.Column == highlight.Column);
+                    whitePawns.Remove(captureEnemyWhitePawn);
+                }
+
+                //Check winning condition
+                if (highlight.Row == 3)
+                    WhoWon = WhoWins.Black;
             }
             
             return true;
@@ -222,6 +351,11 @@ namespace OctoPawn.States
 
         public override void PostUpdate(GameTime gameTime)
         {
+            if (WhoWon != WhoWins.None)
+            {
+                foreach (var button in _buttons)
+                    button.Update(gameTime);
+            }
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -260,6 +394,25 @@ namespace OctoPawn.States
             foreach(var pawn in blackPawns)
             {
                 pawn.Item2.Draw(spriteBatch);
+            }
+
+            if (WhoWon != WhoWins.None)
+            {
+                var position3 = new Vector2(game.WidthX(425), game.HeightY(75));
+                if (WhoWon == WhoWins.White)
+                {
+                    spriteBatch.DrawString(font, "White Wins!", position3, Color.White,
+                        0, Vector2.Zero, new Vector2(game.WidthX(1.0f), game.HeightY(1.0f)), SpriteEffects.None, 0);
+                }
+
+                else if (WhoWon == WhoWins.Black)
+                {
+                    spriteBatch.DrawString(font, "Black Wins!", position3, Color.Black,
+                        0, Vector2.Zero, new Vector2(game.WidthX(1.0f), game.HeightY(1.0f)), SpriteEffects.None, 0);
+                }
+
+                foreach (var button in _buttons)
+                    button.Draw(spriteBatch);
             }
 
             spriteBatch.End();
