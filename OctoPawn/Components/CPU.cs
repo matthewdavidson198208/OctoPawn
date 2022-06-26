@@ -181,8 +181,9 @@ namespace OctoPawn.Components
                                 straightMove[i][j] = 0;
                                 straightMove[i + 1][j] = 2;
                                 canCurrentPlayerCanMove = true;
-                                wins += PermutateBoards(straightMove, !isOpponentsTurn).Item1;
-                                total += PermutateBoards(straightMove, !isOpponentsTurn).Item2;
+                                var permutation = PermutateBoards(straightMove, !isOpponentsTurn);
+                                wins += permutation.Item1;
+                                total += permutation.Item2;
                             }
                         }
                         catch { /*continue on*/ }
@@ -196,8 +197,9 @@ namespace OctoPawn.Components
                                 leftMove[i][j] = 0;
                                 leftMove[i + 1][j - 1] = 2;
                                 canCurrentPlayerCanMove = true;
-                                wins += PermutateBoards(leftMove, !isOpponentsTurn).Item1;
-                                total += PermutateBoards(leftMove, !isOpponentsTurn).Item2;
+                                var permutation = PermutateBoards(leftMove, !isOpponentsTurn);
+                                wins += permutation.Item1;
+                                total += permutation.Item2;
                             }
                         }
                         catch { /*continue on*/ }
@@ -211,8 +213,9 @@ namespace OctoPawn.Components
                                 rightMove[i][j] = 0;
                                 rightMove[i + 1][j + 1] = 2;
                                 canCurrentPlayerCanMove = true;
-                                wins += PermutateBoards(rightMove, !isOpponentsTurn).Item1;
-                                total += PermutateBoards(rightMove, !isOpponentsTurn).Item2;
+                                var permutation = PermutateBoards(rightMove, !isOpponentsTurn);
+                                wins += permutation.Item1;
+                                total += permutation.Item2;
                             }
                         }
                         catch { /*continue on*/ }
