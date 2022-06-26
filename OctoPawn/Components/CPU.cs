@@ -226,9 +226,9 @@ namespace OctoPawn.Components
             if (!canCurrentPlayerCanMove)
             {
                 if (isOpponentsTurn)
-                    return new Tuple<int, int>(0, 1);
-                else
                     return new Tuple<int, int>(1, 1);
+                else
+                    return new Tuple<int, int>(0, 1);
             }
 
             return new Tuple<int, int>(wins, total);
