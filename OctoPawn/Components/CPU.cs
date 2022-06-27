@@ -8,6 +8,10 @@ namespace OctoPawn.Components
     public class BoardState
     {
         public float Weight { get => Outcomes.Item1 / (Outcomes.Item2 == 0 ? 1 : Outcomes.Item2); }
+        public float GetWeight()
+        {
+            return (float)Outcomes.Item1 / (float)Outcomes.Item2;
+        }
         public Tuple<int, int> Outcomes { get; set; }
         public List<List<int>> Board { get; set; }
 
@@ -19,6 +23,16 @@ namespace OctoPawn.Components
     }
     public class CPU
     {
+        public List<List<int>> BlankBoard()
+        {
+            return new List<List<int>>()
+            {
+                new List<int>() { 0, 0, 0, 0 },
+                new List<int>() { 0, 0, 0, 0 },
+                new List<int>() { 0, 0, 0, 0 },
+                new List<int>() { 0, 0, 0, 0 }
+            };
+        }
         public List<List<int>> DetermineBestMove(List<List<int>> currentBoard)
         {
             List<BoardState> allBoardCombos = new List<BoardState>();
@@ -30,12 +44,20 @@ namespace OctoPawn.Components
                 {
                     if(currentBoard[i][j] == 2)
                     {
+                        var copy = BlankBoard();
+                        for(int k = 0; k < 4; k++)
+                        {
+                            for(int l = 0; l < 4; l++)
+                            {
+                                copy[k][l] = currentBoard[k][l];
+                            }
+                        }
                         //can piece move straight forward
                         try
                         {
                             if (currentBoard[i + 1][j] == 0)
                             {
-                                var straightMove = new List<List<int>>(currentBoard);
+                                var straightMove = copy;
                                 straightMove[i][j] = 0;
                                 straightMove[i + 1][j] = 2;
                                 allBoardCombos.Add(new BoardState(new Tuple<int, int>(0,0), straightMove));
@@ -43,12 +65,20 @@ namespace OctoPawn.Components
                         }
                         catch { /*continue on*/ }
 
+                        var copy2 = BlankBoard();
+                        for (int k = 0; k < 4; k++)
+                        {
+                            for (int l = 0; l < 4; l++)
+                            {
+                                copy2[k][l] = currentBoard[k][l];
+                            }
+                        }
                         //can piece capture to left side
                         try
                         {
                             if (currentBoard[i + 1][j - 1] == 1)
                             {
-                                var leftMove = new List<List<int>>(currentBoard);
+                                var leftMove = copy2;
                                 leftMove[i][j] = 0;
                                 leftMove[i + 1][j - 1] = 2;
                                 allBoardCombos.Add(new BoardState(new Tuple<int, int>(0, 0), leftMove));
@@ -56,12 +86,20 @@ namespace OctoPawn.Components
                         }
                         catch { /*continue on*/ }
 
+                        var copy3 = BlankBoard();
+                        for (int k = 0; k < 4; k++)
+                        {
+                            for (int l = 0; l < 4; l++)
+                            {
+                                copy3[k][l] = currentBoard[k][l];
+                            }
+                        }
                         //can piece capture to right side
                         try
                         {
                             if (currentBoard[i + 1][j + 1] == 1)
                             {
-                                var rightMove = new List<List<int>>(currentBoard);
+                                var rightMove = copy3;
                                 rightMove[i][j] = 0;
                                 rightMove[i + 1][j + 1] = 2;
                                 allBoardCombos.Add(new BoardState(new Tuple<int, int>(0, 0), rightMove));
@@ -140,7 +178,18 @@ namespace OctoPawn.Components
                 board.Outcomes = PermutateBoards(board.Board, true);
             }
 
-            var bestBoardOutcome = allBoardCombos.OrderByDescending(x => x.Weight).ToList();
+            var bestBoardOutcome = allBoardCombos.OrderByDescending(x => x.GetWeight()).ToList();
+            string stuff = "";
+            foreach(var board in allBoardCombos)
+            {
+                float x = board.Outcomes.Item1 / board.Outcomes.Item2;
+                stuff += allBoardCombos.IndexOf(board).ToString() + "\n";
+                stuff += board.GetWeight().ToString() + "\n";
+                stuff += board.Outcomes.Item1.ToString() + "\n";
+                stuff += board.Outcomes.Item2.ToString() + "\n";
+                stuff += "\n";
+            }
+            System.IO.File.WriteAllText(@"C:\Users\Matthew\source\repos\OctoPawn\OctoPawn\bin\Debug\netcoreapp3.1\state1.txt", stuff);
             return bestBoardOutcome[0].Board;
         }
 
@@ -150,6 +199,7 @@ namespace OctoPawn.Components
             var wins = 0;
             var forwardMovement = isOpponentsTurn ? -1 : 1;
             var enemyPawnValue = isOpponentsTurn ? 2 : 1;
+            var allyPawnValue = isOpponentsTurn ? 1 : 2;
             var canCurrentPlayerCanMove = false;
 
             //check if winning/losing position
@@ -170,16 +220,24 @@ namespace OctoPawn.Components
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    if (currentBoard[i][j] == 2)
+                    if (currentBoard[i][j] == allyPawnValue)
                     {
+                        var copy = BlankBoard();
+                        for (int k = 0; k < 4; k++)
+                        {
+                            for (int l = 0; l < 4; l++)
+                            {
+                                copy[k][l] = currentBoard[k][l];
+                            }
+                        }
                         //can piece move straight forward
                         try
                         {
                             if (currentBoard[i + forwardMovement][j] == 0)
                             {
-                                var straightMove = new List<List<int>>(currentBoard);
+                                var straightMove = copy;
                                 straightMove[i][j] = 0;
-                                straightMove[i + 1][j] = 2;
+                                straightMove[i + forwardMovement][j] = allyPawnValue;
                                 canCurrentPlayerCanMove = true;
                                 var permutation = PermutateBoards(straightMove, !isOpponentsTurn);
                                 wins += permutation.Item1;
@@ -188,14 +246,22 @@ namespace OctoPawn.Components
                         }
                         catch { /*continue on*/ }
 
+                        var copy2 = BlankBoard();
+                        for (int k = 0; k < 4; k++)
+                        {
+                            for (int l = 0; l < 4; l++)
+                            {
+                                copy2[k][l] = currentBoard[k][l];
+                            }
+                        }
                         //can piece capture to left side
                         try
                         {
                             if (currentBoard[i + forwardMovement][j - 1] == enemyPawnValue)
                             {
-                                var leftMove = new List<List<int>>(currentBoard);
+                                var leftMove = copy2;
                                 leftMove[i][j] = 0;
-                                leftMove[i + 1][j - 1] = 2;
+                                leftMove[i + forwardMovement][j - 1] = allyPawnValue;
                                 canCurrentPlayerCanMove = true;
                                 var permutation = PermutateBoards(leftMove, !isOpponentsTurn);
                                 wins += permutation.Item1;
@@ -204,14 +270,22 @@ namespace OctoPawn.Components
                         }
                         catch { /*continue on*/ }
 
+                        var copy3 = BlankBoard();
+                        for (int k = 0; k < 4; k++)
+                        {
+                            for (int l = 0; l < 4; l++)
+                            {
+                                copy3[k][l] = currentBoard[k][l];
+                            }
+                        }
                         //can piece capture to right side
                         try
                         {
                             if (currentBoard[i + forwardMovement][j + 1] == enemyPawnValue)
                             {
-                                var rightMove = new List<List<int>>(currentBoard);
+                                var rightMove = copy3;
                                 rightMove[i][j] = 0;
-                                rightMove[i + 1][j + 1] = 2;
+                                rightMove[i + forwardMovement][j + 1] = allyPawnValue;
                                 canCurrentPlayerCanMove = true;
                                 var permutation = PermutateBoards(rightMove, !isOpponentsTurn);
                                 wins += permutation.Item1;

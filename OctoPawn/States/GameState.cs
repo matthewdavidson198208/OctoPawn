@@ -21,7 +21,10 @@ namespace OctoPawn.States
         public List<Tuple<int,Pawn>> whitePawns { get; set; }
         public List<Tuple<int, Pawn>> blackPawns { get; set; }
         public List<Tuple<Color, RectangleF>> BoardSquares { get; set; }
+        public CPU AI { get; set; }
         public bool IsWhitesTurn { get; set; }
+        public bool IsComputerPlaying { get; set; }
+        public bool IsComputerFirst { get; set; }
 
         private int _selectedSquare;
         private List<HighlightSquare> HighlightSquares { get; set; }
@@ -41,11 +44,20 @@ namespace OctoPawn.States
 
         public GameState(Game1 game1, ContentManager content1) : base(game1, content1)
         {
-            
+            //TESTING
+            IsComputerPlaying = true;
         }
 
         private void Reset()
         {
+            if (IsComputerPlaying)
+            {
+                AI = new CPU();
+            }
+            else
+            {
+                AI = null;
+            }
             WhoWon = WhoWins.None;
             IsWhitesTurn = IsValidMove = true;
             _selectedSquare = 12;
@@ -152,6 +164,9 @@ namespace OctoPawn.States
         private int _pawnID;
         private void onHold(object sender, EventArgs e)
         {
+            if ((IsComputerFirst && IsWhitesTurn) || (!IsComputerFirst && !IsWhitesTurn))
+                return;
+
             if (WhoWon != WhoWins.None)
                 return;
 
@@ -167,13 +182,75 @@ namespace OctoPawn.States
             pawn.Bounds = new RectangleF(_currentMouse.Position.X - 25, _currentMouse.Position.Y - 50, 50, 100);
         }
 
+        public List<List<int>> UpdateBoard()
+        {
+            var output = new List<List<int>>(){
+                new List<int>() { 0, 0, 0, 0 },
+                new List<int>() { 0, 0, 0, 0 },
+                new List<int>() { 0, 0, 0, 0 },
+                new List<int>() { 0, 0, 0, 0 }
+            };
+            foreach(var white in whitePawns)
+            {
+                output[white.Item2.Row][white.Item2.Column] = 1;
+            }
+            foreach (var black in blackPawns)
+            {
+                output[black.Item2.Row][black.Item2.Column] = 2;
+            }
+            return output;
+        }
+
+        public void UpdatePawns()
+        {
+
+            var i = 0;
+            for (int j = 0; j < 4; j++)
+            {
+                for (int k = 0; k < 4; k++)
+                {
+                    if(BoardState[j][k] == 1)
+                    {
+                        var highlight = HighlightSquares.FirstOrDefault(x => x.Row == j && x.Column == k);
+                        whitePawns[i].Item2.Row = j;
+                        whitePawns[i].Item2.Column = k;
+                        whitePawns[i].Item2.Bounds.Position = highlight.SquarePosition.Location;
+                        i++;
+                    }
+                }
+            }
+
+            i = 0;
+            for (int j = 0; j < 4; j++)
+            {
+                for (int k = 0; k < 4; k++)
+                {
+                    if (BoardState[j][k] == 2)
+                    {
+                        var highlight = HighlightSquares.FirstOrDefault(x => x.Row == j && x.Column == k);
+                        blackPawns[i].Item2.Row = j;
+                        blackPawns[i].Item2.Column = k;
+                        blackPawns[i].Item2.Bounds.Position = highlight.SquarePosition.Location;
+                        i++;
+                    }
+                }
+            }
+        }
+
         public override void Update(GameTime gameTime)
         {
             _previousMouse = _currentMouse;
             _currentMouse = Mouse.GetState();
-            if (CheckIfCantMoveAnymore())
+            var updateBoard = new List<List<int>>();
+            if (CheckIfCantMoveAnymore() || WhoWon != WhoWins.None)
             {
-
+                //continue onward
+            }
+            else if (IsComputerPlaying && (IsComputerFirst && IsWhitesTurn) || (!IsComputerFirst && !IsWhitesTurn))
+            {
+                BoardState = AI.MakeMove(BoardState);
+                UpdatePawns();
+                IsWhitesTurn = !IsWhitesTurn;
             }
             else if (_currentMouse.LeftButton == ButtonState.Released && _previousMouse.LeftButton == ButtonState.Pressed)
             {
@@ -222,6 +299,7 @@ namespace OctoPawn.States
                                     x.Row == pawn.Row && x.Column == pawn.Column);
                         pawn.Bounds.Position = resetPosition.SquarePosition.Location;
                     }
+                    BoardState = UpdateBoard();
                 }
                 _pawnID = -1;
             }
@@ -308,6 +386,8 @@ namespace OctoPawn.States
                 {
                     var captureEnemyBlackPawn = blackPawns.FirstOrDefault(x => x.Item2.Row == highlight.Row && x.Item2.Column == highlight.Column);
                     blackPawns.Remove(captureEnemyBlackPawn);
+                    BoardState[highlight.Row][highlight.Column] = 1;
+                    BoardState[pawn.Row][pawn.Column] = 0;
                 }
 
                 //Check winning condition
@@ -339,6 +419,8 @@ namespace OctoPawn.States
                 {
                     var captureEnemyWhitePawn = whitePawns.FirstOrDefault(x => x.Item2.Row == highlight.Row && x.Item2.Column == highlight.Column);
                     whitePawns.Remove(captureEnemyWhitePawn);
+                    BoardState[highlight.Row][highlight.Column] = 2;
+                    BoardState[pawn.Row][pawn.Column] = 0;
                 }
 
                 //Check winning condition
