@@ -46,6 +46,7 @@ namespace OctoPawn.States
         {
             //TESTING
             IsComputerPlaying = true;
+            //IsComputerFirst = true;
         }
 
         private void Reset()
@@ -59,7 +60,8 @@ namespace OctoPawn.States
                 AI = null;
             }
             WhoWon = WhoWins.None;
-            IsWhitesTurn = IsValidMove = true;
+            IsWhitesTurn = true;
+            IsValidMove = true;
             _selectedSquare = 12;
             _pawnID = -1;
             BoardState = new List<List<int>>() {
@@ -164,8 +166,10 @@ namespace OctoPawn.States
         private int _pawnID;
         private void onHold(object sender, EventArgs e)
         {
-            if ((IsComputerFirst && IsWhitesTurn) || (!IsComputerFirst && !IsWhitesTurn))
+            if (IsComputerPlaying && (IsComputerFirst && IsWhitesTurn) || (!IsComputerFirst && !IsWhitesTurn))
                 return;
+            //if (IsComputerPlaying && (IsComputerFirst && !IsWhitesTurn) || (!IsComputerFirst && IsWhitesTurn))
+            //    return;
 
             if (WhoWon != WhoWins.None)
                 return;
@@ -219,6 +223,9 @@ namespace OctoPawn.States
                     }
                 }
             }
+            //check if white pawn was captured and remove
+            if (i != whitePawns.Count)
+                whitePawns.Remove(whitePawns[i]);
 
             i = 0;
             for (int j = 0; j < 4; j++)
@@ -235,6 +242,9 @@ namespace OctoPawn.States
                     }
                 }
             }
+            //check if black pawn was captured and remove
+            if (i != blackPawns.Count)
+                blackPawns.Remove(blackPawns[i]);
         }
 
         public override void Update(GameTime gameTime)
@@ -247,10 +257,19 @@ namespace OctoPawn.States
                 //continue onward
             }
             else if (IsComputerPlaying && (IsComputerFirst && IsWhitesTurn) || (!IsComputerFirst && !IsWhitesTurn))
+            //else if (IsComputerPlaying && (IsComputerFirst && !IsWhitesTurn) || (!IsComputerFirst && IsWhitesTurn))
             {
-                BoardState = AI.MakeMove(BoardState);
-                UpdatePawns();
-                IsWhitesTurn = !IsWhitesTurn;
+                var check = AI.MakeMove(BoardState);
+                if(check == BoardState)
+                {
+                    WhoWon = WhoWins.White;
+                }
+                else
+                {
+                    BoardState = check;
+                    UpdatePawns();
+                    IsWhitesTurn = !IsWhitesTurn;
+                }
             }
             else if (_currentMouse.LeftButton == ButtonState.Released && _previousMouse.LeftButton == ButtonState.Pressed)
             {
