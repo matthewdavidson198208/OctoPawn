@@ -21,8 +21,172 @@ namespace OctoPawn.Components
             Board = board;
         }
     }
+
     public class CPU
     {
+        public List<List<int>> CopyTable(List<List<int>> input)
+        {
+            return input;
+        }
+        public bool IsEqual(List<List<int>> input, List<List<int>> input2)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    if(input[i][j] != input2[i][j])
+                        return false;
+                }
+            }
+            return true;
+        }
+        public Tuple<bool,List<List<int>>> LookUpTable(List<List<int>> input)
+        {
+            Random Random = new Random(Guid.NewGuid().GetHashCode());
+            var output = CopyTable(input);
+            var check = new List<List<int>>()
+                {
+                    new List<int>() { 2, 2, 2, 2 },
+                    new List<int>() { 0, 0, 0, 0 },
+                    new List<int>() { 0, 0, 0, 0 },
+                    new List<int>() { 1, 1, 1, 1 }
+                };
+            if (IsEqual(input,check))
+            {
+                var x = Random.Next(0, 3);
+                switch (x)
+                {
+                    case 0:
+                    output = new List<List<int>>()
+                    {
+                        new List<int>() { 0, 2, 2, 2 },
+                        new List<int>() { 2, 0, 0, 0 },
+                        new List<int>() { 0, 0, 0, 0 },
+                        new List<int>() { 1, 1, 1, 1 }
+                    };
+                    return new Tuple<bool, List<List<int>>>(true, output);
+                    case 1:
+                    output = new List<List<int>>()
+                    {
+                        new List<int>() { 2, 0, 2, 2 },
+                        new List<int>() { 0, 2, 0, 0 },
+                        new List<int>() { 0, 0, 0, 0 },
+                        new List<int>() { 1, 1, 1, 1 }
+                    };
+                    return new Tuple<bool, List<List<int>>>(true, output);
+                    case 2:
+                    output = new List<List<int>>()
+                    {
+                        new List<int>() { 2, 2, 0, 2 },
+                        new List<int>() { 0, 0, 2, 0 },
+                        new List<int>() { 0, 0, 0, 0 },
+                        new List<int>() { 1, 1, 1, 1 }
+                    };
+                    return new Tuple<bool, List<List<int>>>(true, output);
+                    case 3:
+                    output = new List<List<int>>()
+                    {
+                        new List<int>() { 2, 2, 2, 0 },
+                        new List<int>() { 0, 0, 0, 2 },
+                        new List<int>() { 0, 0, 0, 0 },
+                        new List<int>() { 1, 1, 1, 1 }
+                    };
+                    return new Tuple<bool, List<List<int>>>(true, output);
+                }
+               
+            }
+            else
+            {
+                check = new List<List<int>>()
+                {
+                    new List<int>() { 2, 2, 2, 2 },
+                    new List<int>() { 0, 0, 0, 0 },
+                    new List<int>() { 0, 0, 0, 0 },
+                    new List<int>() { 1, 1, 1, 1 }
+                };
+            }
+
+            if (IsEqual(input, check))
+            {
+                output = new List<List<int>>()
+                {
+                    new List<int>() { 2, 2, 2, 2 },
+                    new List<int>() { 0, 0, 2, 0 },
+                    new List<int>() { 1, 0, 0, 0 },
+                    new List<int>() { 0, 1, 1, 1 }
+                };
+                return new Tuple<bool, List<List<int>>>(true, output);
+            }
+            else
+            {
+                check = new List<List<int>>()
+                {
+                    new List<int>() { 2, 2, 2, 2 },
+                    new List<int>() { 0, 0, 0, 0 },
+                    new List<int>() { 0, 0, 0, 0 },
+                    new List<int>() { 1, 1, 1, 1 }
+                };
+            }
+
+            if (IsEqual(input, check))
+            {
+                output = new List<List<int>>()
+                {
+                    new List<int>() { 2, 2, 2, 2 },
+                    new List<int>() { 0, 0, 2, 0 },
+                    new List<int>() { 0, 1, 0, 0 },
+                    new List<int>() { 1, 0, 1, 1 }
+                };
+                return new Tuple<bool, List<List<int>>>(true, output);
+            }
+            else
+            {
+                check = new List<List<int>>()
+                {
+                    new List<int>() { 2, 2, 2, 2 },
+                    new List<int>() { 0, 0, 0, 0 },
+                    new List<int>() { 0, 0, 0, 0 },
+                    new List<int>() { 1, 1, 1, 1 }
+                };
+            }
+
+            if (IsEqual(input, check))
+            {
+                output = new List<List<int>>()
+                {
+                    new List<int>() { 2, 0, 2, 2 },
+                    new List<int>() { 0, 2, 0, 0 },
+                    new List<int>() { 0, 0, 1, 0 },
+                    new List<int>() { 1, 1, 0, 1 }
+                };
+                return new Tuple<bool, List<List<int>>>(true, output);
+            }
+            else
+            {
+                check = new List<List<int>>()
+                {
+                    new List<int>() { 2, 2, 2, 2 },
+                    new List<int>() { 0, 0, 0, 0 },
+                    new List<int>() { 0, 0, 0, 0 },
+                    new List<int>() { 1, 1, 1, 1 }
+                };
+            }
+
+            if (IsEqual(input, check))
+            {
+                output = new List<List<int>>()
+                {
+                    new List<int>() { 2, 0, 2, 2 },
+                    new List<int>() { 0, 2, 0, 0 },
+                    new List<int>() { 0, 0, 0, 1 },
+                    new List<int>() { 1, 1, 1, 0 }
+                };
+                return new Tuple<bool, List<List<int>>>(true, output);
+            }
+
+            return new Tuple<bool, List<List<int>>>(false, output);
+        }
+
         public List<List<int>> BlankBoard()
         {
             return new List<List<int>>()
@@ -35,6 +199,10 @@ namespace OctoPawn.Components
         }
         public List<List<int>> DetermineBestMove(List<List<int>> currentBoard)
         {
+            var checkBeforeCalulate = LookUpTable(currentBoard);
+            if (checkBeforeCalulate.Item1)
+                return checkBeforeCalulate.Item2;
+
             List<BoardState> allBoardCombos = new List<BoardState>();
 
             //Find all possible current moves
@@ -124,6 +292,43 @@ namespace OctoPawn.Components
                         return board.Board;
                 }
 
+                //If close to victory, go for it!
+                for (int i = 0; i < 4; i++)
+                {
+                    if (board.Board[1].Contains(1))
+                        break;
+                    var x = 0;
+                    try
+                    {
+                        if (board.Board[2][i] == 2)
+                            x++;
+                    }
+                    catch 
+                    {
+                        x++;
+                    }
+                    try
+                    {
+                        if (board.Board[3][i - 1] == 0)
+                            x++;
+                    }
+                    catch
+                    {
+                        x++;
+                    }
+                    try
+                    {
+                        if (board.Board[3][i + 1] == 0)
+                            x++;
+                    }
+                    catch
+                    {
+                        x++;
+                    }
+                    if(x == 3)
+                        return board.Board;
+                }
+
                 var cantMove = true;
                 //Check if opponent cannot make any moves
                 for (int i = 0; i < 4; i++)
@@ -187,7 +392,16 @@ namespace OctoPawn.Components
                 stuff += board.GetWeight().ToString() + "\n";
                 stuff += board.Outcomes.Item1.ToString() + "\n";
                 stuff += board.Outcomes.Item2.ToString() + "\n";
-                stuff += "\n";
+                for (int i = 0; i < 4; i++)
+                {
+                    for (var j = 0; j < 4; j++)
+                    {
+                        stuff += board.Board[i][j].ToString() + ",";
+                    }
+                    stuff += "\n";
+                }
+
+                stuff += "\n\n";
             }
             System.IO.File.WriteAllText(@"C:\Users\Matthew\source\repos\OctoPawn\OctoPawn\bin\Debug\netcoreapp3.1\state1.txt", stuff);
             return bestBoardOutcome[0].Board;

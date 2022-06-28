@@ -46,7 +46,7 @@ namespace OctoPawn.States
         {
             //TESTING
             IsComputerPlaying = true;
-            //IsComputerFirst = true;
+            IsComputerFirst = true;
         }
 
         private void Reset()
@@ -60,7 +60,7 @@ namespace OctoPawn.States
                 AI = null;
             }
             WhoWon = WhoWins.None;
-            IsWhitesTurn = true;
+            IsWhitesTurn = false;
             IsValidMove = true;
             _selectedSquare = 12;
             _pawnID = -1;
@@ -166,10 +166,10 @@ namespace OctoPawn.States
         private int _pawnID;
         private void onHold(object sender, EventArgs e)
         {
-            if (IsComputerPlaying && (IsComputerFirst && IsWhitesTurn) || (!IsComputerFirst && !IsWhitesTurn))
-                return;
-            //if (IsComputerPlaying && (IsComputerFirst && !IsWhitesTurn) || (!IsComputerFirst && IsWhitesTurn))
+            //if (IsComputerPlaying && (IsComputerFirst && IsWhitesTurn) || (!IsComputerFirst && !IsWhitesTurn))
             //    return;
+            if (IsComputerPlaying && (IsComputerFirst && !IsWhitesTurn) || (!IsComputerFirst && IsWhitesTurn))
+                return;
 
             if (WhoWon != WhoWins.None)
                 return;
@@ -256,9 +256,9 @@ namespace OctoPawn.States
             {
                 //continue onward
             }
-            else if (IsComputerPlaying && (IsComputerFirst && IsWhitesTurn) || (!IsComputerFirst && !IsWhitesTurn))
-            //else if (IsComputerPlaying && (IsComputerFirst && !IsWhitesTurn) || (!IsComputerFirst && IsWhitesTurn))
-            {
+            //else if (IsComputerPlaying && (IsComputerFirst && IsWhitesTurn) || (!IsComputerFirst && !IsWhitesTurn))
+            else if (IsComputerPlaying && (IsComputerFirst && !IsWhitesTurn) || (!IsComputerFirst && IsWhitesTurn))
+                    {
                 var check = AI.MakeMove(BoardState);
                 if(check == BoardState)
                 {
@@ -268,6 +268,8 @@ namespace OctoPawn.States
                 {
                     BoardState = check;
                     UpdatePawns();
+                    if(BoardState[3].Contains(2))
+                        WhoWon = WhoWins.Black;
                     IsWhitesTurn = !IsWhitesTurn;
                 }
             }
