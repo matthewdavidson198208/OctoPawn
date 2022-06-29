@@ -54,7 +54,7 @@ namespace OctoPawn.States
 
         private void Button_Player_Clicked(object sender, EventArgs args)
         {
-            game.ChangeState(new GameState(game, content));
+            game.ChangeState(new TransitionState(game, content));
         }
 
         private void Button_Instructions_Clicked(object sender, EventArgs args)
@@ -114,19 +114,19 @@ namespace OctoPawn.States
             foreach (var button in _buttons)
                 button.Draw(spriteBatch);
 
-            var width = ((Button)_buttons[_selectedButton]).Position.X - (((Button)_buttons[_selectedButton]).Rectangle.Width / 2) - game.WidthX(25);
-            var height = ((Button)_buttons[_selectedButton]).Position.Y;
-            spriteBatch.DrawCircle(new CircleF(new Point2(width, height),
-                game.WidthX(10)), 6, Color.White);
+            //var width = ((Button)_buttons[_selectedButton]).Position.X - (((Button)_buttons[_selectedButton]).Rectangle.Width / 2) - game.WidthX(25);
+            //var height = ((Button)_buttons[_selectedButton]).Position.Y;
+            //spriteBatch.DrawCircle(new CircleF(new Point2(width, height),
+            //    game.WidthX(10)), 6, Color.White);
 
-            var width2 = ((Button)_buttons[_selectedButton]).Position.X + (((Button)_buttons[_selectedButton]).Rectangle.Width / 2) + game.WidthX(25);
-            var height2 = ((Button)_buttons[_selectedButton]).Position.Y;
-            spriteBatch.DrawCircle(new CircleF(new Point2(width2, height2),
-               game.WidthX(10)), 6, Color.White);
+            //var width2 = ((Button)_buttons[_selectedButton]).Position.X + (((Button)_buttons[_selectedButton]).Rectangle.Width / 2) + game.WidthX(25);
+            //var height2 = ((Button)_buttons[_selectedButton]).Position.Y;
+            //spriteBatch.DrawCircle(new CircleF(new Point2(width2, height2),
+            //   game.WidthX(10)), 6, Color.White);
 
             var font = content.Load<SpriteFont>("Description");
-            spriteBatch.DrawString(font, 
-                "Use Arrow Keys and Enter Key or Mouse to select an option.\n" +
+            spriteBatch.DrawString(font,
+                "               Use Mouse to select an option.\n" +
                 "               Press Escape Key to quit at any time.\n",
                 new Vector2(200, game.HeightY(480)),
                 Color.White, 0, Vector2.Zero, new Vector2(game.WidthX(1.0f), game.HeightY(1.0f)), SpriteEffects.None, 0);
