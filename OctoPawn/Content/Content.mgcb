@@ -34,6 +34,18 @@
 /processorParam:TextureFormat=Compressed
 /build:Game_Over.spritefont
 
+#begin PawnMove.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:PawnMove.wav
+
+#begin PawnMoveTrim.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:PawnMoveTrim.wav
+
 #begin Sprites/black_pawn.png
 /importer:TextureImporter
 /processor:TextureProcessor

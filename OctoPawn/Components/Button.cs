@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OctoPawn.States;
+using Microsoft.Xna.Framework.Audio;
 
 namespace OctoPawn.Components
 {

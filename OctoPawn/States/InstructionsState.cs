@@ -44,6 +44,7 @@ namespace OctoPawn.States
 
         private void Button_Exit_Clicked(object sender, EventArgs args)
         {
+            game.Select.Play();
             game.ChangeState(new MenuState(game, content));
         }
 

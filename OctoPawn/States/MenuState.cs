@@ -54,16 +54,19 @@ namespace OctoPawn.States
 
         private void Button_Player_Clicked(object sender, EventArgs args)
         {
+            game.Select.Play();
             game.ChangeState(new TransitionState(game, content));
         }
 
         private void Button_Instructions_Clicked(object sender, EventArgs args)
         {
+            game.Select.Play();
             game.ChangeState(new InstructionsState(game, content));
         }
 
         private void Button_Quit_Clicked(object sender, EventArgs args)
         {
+            game.Select.Play();
             game.Exit();
         }
 

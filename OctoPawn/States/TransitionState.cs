@@ -57,11 +57,13 @@ namespace OctoPawn.States
 
         private void Button_PvC_Clicked(object sender, EventArgs args)
         {
+            game.Select.Play();
             _isComputerPlaying = true;
         }
 
         private void Button_PvP_Clicked(object sender, EventArgs args)
         {
+            game.Select.Play();
             game.ChangeState(new GameState(game, content)
             {
                 IsComputerPlaying = false,
@@ -71,6 +73,7 @@ namespace OctoPawn.States
 
         private void Button_CFirst_Clicked(object sender, EventArgs args)
         {
+            game.Select.Play();
             game.ChangeState(new GameState(game, content)
             {
                 IsComputerPlaying = true,
@@ -80,6 +83,7 @@ namespace OctoPawn.States
 
         private void Button_PFirst_Clicked(object sender, EventArgs args)
         {
+            game.Select.Play();
             game.ChangeState(new GameState(game, content)
             {
                 IsComputerPlaying = true,

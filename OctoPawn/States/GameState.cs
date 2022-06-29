@@ -150,16 +150,19 @@ namespace OctoPawn.States
 
         private void Button_Retry_Clicked(object sender, EventArgs args)
         {
+            game.Select.Play();
             LoadContent();
         }
 
         private void Button_Return_Clicked(object sender, EventArgs args)
         {
+            game.Select.Play();
             game.ChangeState(new MenuState(game, content));
         }
 
         private void Button_Quit_Clicked(object sender, EventArgs args)
         {
+            game.Select.Play();
             game.Exit();
         }
 
@@ -282,6 +285,7 @@ namespace OctoPawn.States
                                 WhoWon = WhoWins.Black;
                             IsWhitesTurn = !IsWhitesTurn;
                         }
+                        game.Select.Play();
                     }
                 }
                 else if (_currentMouse.LeftButton == ButtonState.Released && _previousMouse.LeftButton == ButtonState.Pressed)
@@ -312,6 +316,7 @@ namespace OctoPawn.States
                                         pawn.Column = highlight.Column;
                                         isPlaced = true;
                                         IsWhitesTurn = !IsWhitesTurn;
+                                        game.Select.Play();
                                     }
                                     break;
                                 }

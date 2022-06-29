@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Sprites;
@@ -13,12 +14,14 @@ namespace OctoPawn
 
         private State _currentState;
         private State _nextState;
+        public SoundEffect Select { get; set; }
 
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            Select = Content.Load<SoundEffect>("PawnMoveTrim");
         }
 
         /// <summary>
