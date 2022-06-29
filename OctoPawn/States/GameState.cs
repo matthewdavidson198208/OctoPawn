@@ -28,6 +28,7 @@ namespace OctoPawn.States
 
         private int _selectedSquare;
         private List<HighlightSquare> HighlightSquares { get; set; }
+        private int _delayCPUmove { get; set; }
 
         public enum WhoWins
         {
@@ -46,7 +47,7 @@ namespace OctoPawn.States
         {
             //TESTING
             IsComputerPlaying = true;
-            IsComputerFirst = true;
+            IsComputerFirst = false;
         }
 
         private void Reset()
@@ -59,8 +60,9 @@ namespace OctoPawn.States
             {
                 AI = null;
             }
+            _delayCPUmove = 0;
             WhoWon = WhoWins.None;
-            IsWhitesTurn = false;
+            IsWhitesTurn = !IsComputerFirst;
             IsValidMove = true;
             _selectedSquare = 12;
             _pawnID = -1;
@@ -168,7 +170,7 @@ namespace OctoPawn.States
         {
             //if (IsComputerPlaying && (IsComputerFirst && IsWhitesTurn) || (!IsComputerFirst && !IsWhitesTurn))
             //    return;
-            if (IsComputerPlaying && (IsComputerFirst && !IsWhitesTurn) || (!IsComputerFirst && IsWhitesTurn))
+            if (IsComputerPlaying && !IsWhitesTurn)
                 return;
 
             if (WhoWon != WhoWins.None)
@@ -245,6 +247,8 @@ namespace OctoPawn.States
             //check if black pawn was captured and remove
             if (i != blackPawns.Count)
                 blackPawns.Remove(blackPawns[i]);
+
+            BoardState = UpdateBoard();
         }
 
         public override void Update(GameTime gameTime)
@@ -256,74 +260,84 @@ namespace OctoPawn.States
             {
                 //continue onward
             }
-            //else if (IsComputerPlaying && (IsComputerFirst && IsWhitesTurn) || (!IsComputerFirst && !IsWhitesTurn))
-            else if (IsComputerPlaying && (IsComputerFirst && !IsWhitesTurn) || (!IsComputerFirst && IsWhitesTurn))
-                    {
-                var check = AI.MakeMove(BoardState);
-                if(check == BoardState)
-                {
-                    WhoWon = WhoWins.White;
-                }
-                else
-                {
-                    BoardState = check;
-                    UpdatePawns();
-                    if(BoardState[3].Contains(2))
-                        WhoWon = WhoWins.Black;
-                    IsWhitesTurn = !IsWhitesTurn;
-                }
-            }
-            else if (_currentMouse.LeftButton == ButtonState.Released && _previousMouse.LeftButton == ButtonState.Pressed)
+            else
             {
-                if(_pawnID != -1)
+                if (IsComputerPlaying && !IsWhitesTurn)
                 {
-                    var isPlaced = false;
-                    Pawn pawn;
-                    if (IsWhitesTurn)
-                    {
-                        pawn = whitePawns.First(x => x.Item1 == _pawnID).Item2;
-                    }
+                    if (_delayCPUmove < 100)
+                        _delayCPUmove++;
                     else
                     {
-                        pawn = blackPawns.First(x => x.Item1 == _pawnID).Item2;
-                    }
-                    foreach (var highlight in HighlightSquares)
-                    {
-                        if (highlight.IsHovering)
+                        _delayCPUmove = 0;
+                        var check = AI.MakeMove(BoardState);
+                        if (check == BoardState)
                         {
-                            IsValidMove = CheckIfValidMove(IsWhitesTurn, pawn, highlight);
-                            if (IsValidMove)
-                            {
-                                pawn.Bounds.Position = highlight.SquarePosition.Location;
-                                if(pawn.Row != highlight.Row || pawn.Column != highlight.Column)
-                                {
-                                    pawn.Row = highlight.Row;
-                                    pawn.Column = highlight.Column;
-                                    isPlaced = true;
-                                    IsWhitesTurn = !IsWhitesTurn;
-                                }
-                                break;
-                            }
-                            else
-                            {
-                                var resetPosition = HighlightSquares.FirstOrDefault(x => 
-                                    x.Row == pawn.Row && x.Column == pawn.Column);
-                                isPlaced = true;
-                                pawn.Bounds.Position = resetPosition.SquarePosition.Location;
-                                break;
-                            }
+                            WhoWon = WhoWins.White;
+                        }
+                        else
+                        {
+                            BoardState = check;
+                            UpdatePawns();
+                            if (BoardState[3].Contains(2))
+                                WhoWon = WhoWins.Black;
+                            IsWhitesTurn = !IsWhitesTurn;
                         }
                     }
-                    if (!isPlaced)
-                    {
-                        var resetPosition = HighlightSquares.FirstOrDefault(x =>
-                                    x.Row == pawn.Row && x.Column == pawn.Column);
-                        pawn.Bounds.Position = resetPosition.SquarePosition.Location;
-                    }
-                    BoardState = UpdateBoard();
                 }
-                _pawnID = -1;
+                else if (_currentMouse.LeftButton == ButtonState.Released && _previousMouse.LeftButton == ButtonState.Pressed)
+                {
+                    if (_pawnID != -1)
+                    {
+                        var isPlaced = false;
+                        Pawn pawn;
+                        if (IsWhitesTurn)
+                        {
+                            pawn = whitePawns.First(x => x.Item1 == _pawnID).Item2;
+                        }
+                        else
+                        {
+                            pawn = blackPawns.First(x => x.Item1 == _pawnID).Item2;
+                        }
+                        foreach (var highlight in HighlightSquares)
+                        {
+                            if (highlight.IsHovering)
+                            {
+                                IsValidMove = CheckIfValidMove(IsWhitesTurn, pawn, highlight);
+                                if (IsValidMove)
+                                {
+                                    pawn.Bounds.Position = highlight.SquarePosition.Location;
+                                    if (pawn.Row != highlight.Row || pawn.Column != highlight.Column)
+                                    {
+                                        pawn.Row = highlight.Row;
+                                        pawn.Column = highlight.Column;
+                                        isPlaced = true;
+                                        IsWhitesTurn = !IsWhitesTurn;
+                                    }
+                                    break;
+                                }
+                                else
+                                {
+                                    var resetPosition = HighlightSquares.FirstOrDefault(x =>
+                                        x.Row == pawn.Row && x.Column == pawn.Column);
+                                    isPlaced = true;
+                                    pawn.Bounds.Position = resetPosition.SquarePosition.Location;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!isPlaced)
+                        {
+                            var resetPosition = HighlightSquares.FirstOrDefault(x =>
+                                        x.Row == pawn.Row && x.Column == pawn.Column);
+                            pawn.Bounds.Position = resetPosition.SquarePosition.Location;
+                        }
+                        BoardState = UpdateBoard();
+                    }
+                    _pawnID = -1;
+                }
             }
+            //else if (IsComputerPlaying && (IsComputerFirst && IsWhitesTurn) || (!IsComputerFirst && !IsWhitesTurn))
+            
 
             foreach (var highlight in HighlightSquares)
             {
@@ -467,10 +481,19 @@ namespace OctoPawn.States
 
             var font = content.Load<SpriteFont>("Description");
             var position = new Vector2(game.WidthX(425), game.HeightY(25));
-            var text = IsWhitesTurn ? "White's Turn" : "Black's Turn";
+            var text = IsWhitesTurn ? "White's Turn" + (IsComputerPlaying ? " (Player)" : " (Player 1)")
+                : "Black's Turn" + (IsComputerPlaying ? " (Computer)" : " (Player 2)");
             var color = IsWhitesTurn ? Color.White : Color.Black;
             spriteBatch.DrawString(font, text, position, color,
                     0, Vector2.Zero, new Vector2(game.WidthX(1.0f), game.HeightY(1.0f)), SpriteEffects.None, 0);
+
+            position = new Vector2(game.WidthX(25), game.HeightY(25));
+            spriteBatch.DrawString(font, "White Pawns:\n" + "     " + whitePawns.Count.ToString(), position, Color.White,
+                    0, Vector2.Zero, new Vector2(game.WidthX(1.0f), game.HeightY(1.0f)), SpriteEffects.None, 0);
+
+            position = new Vector2(game.WidthX(825), game.HeightY(25));
+            spriteBatch.DrawString(font, "Black Pawns:\n" + "     " + blackPawns.Count.ToString(), position, Color.Black,
+                    0, Vector2.Zero, new Vector2(game.WidthX(1.0f), game.HeightY(1.0f)), SpriteEffects.None, 0); ;
 
             if (!IsValidMove)
             {
@@ -504,13 +527,13 @@ namespace OctoPawn.States
                 var position3 = new Vector2(game.WidthX(425), game.HeightY(75));
                 if (WhoWon == WhoWins.White)
                 {
-                    spriteBatch.DrawString(font, "White Wins!", position3, Color.White,
+                    spriteBatch.DrawString(font, "White Wins" + (IsComputerPlaying ? " (Player)" : " (Player 1)") +"!", position3, Color.White,
                         0, Vector2.Zero, new Vector2(game.WidthX(1.0f), game.HeightY(1.0f)), SpriteEffects.None, 0);
                 }
 
                 else if (WhoWon == WhoWins.Black)
                 {
-                    spriteBatch.DrawString(font, "Black Wins!", position3, Color.Black,
+                    spriteBatch.DrawString(font, "Black Wins" + (IsComputerPlaying ? " (Computer)" : " (Player 2)") + "!", position3, Color.Black,
                         0, Vector2.Zero, new Vector2(game.WidthX(1.0f), game.HeightY(1.0f)), SpriteEffects.None, 0);
                 }
 

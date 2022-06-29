@@ -95,6 +95,7 @@ namespace OctoPawn.Components
 
             //spriteBatch.Draw(_texture, Position, null, colour, 0f, Origin, 1f, SpriteEffects.None, Layer);
             spriteBatch.DrawRectangle(Rectangle, colour);
+            spriteBatch.FillRectangle(Rectangle, new Color(0,0,0,100));
 
             if (!string.IsNullOrEmpty(Text))
             {
