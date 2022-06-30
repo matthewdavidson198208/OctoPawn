@@ -581,6 +581,94 @@ namespace OctoPawn.Components
                 };
                 return new Tuple<bool, List<List<int>>>(true, output);
             }
+            else
+            {
+                check = new List<List<int>>()
+                {
+                    new List<int>() { 2, 0, 0, 0 },
+                    new List<int>() { 0, 2, 2, 0 },
+                    new List<int>() { 0, 0, 1, 0 },
+                    new List<int>() { 1, 0, 0, 1 }
+                };
+            }
+            
+            if (IsEqual(input, check))
+            {
+                output = new List<List<int>>()
+                {
+                    new List<int>() { 2, 0, 0, 0 },
+                    new List<int>() { 0, 0, 2, 0 },
+                    new List<int>() { 0, 2, 1, 0 },
+                    new List<int>() { 1, 0, 0, 1 }
+                };
+                return new Tuple<bool, List<List<int>>>(true, output);
+            }
+            else
+            {
+                check = new List<List<int>>()
+                {
+                    new List<int>() { 2, 0, 0, 0 },
+                    new List<int>() { 0, 2, 2, 0 },
+                    new List<int>() { 1, 0, 0, 0 },
+                    new List<int>() { 0, 0, 1, 1 }
+                };
+            }
+
+            if (IsEqual(input, check))
+            {
+                output = new List<List<int>>()
+                {
+                    new List<int>() { 2, 0, 0, 0 },
+                    new List<int>() { 0, 0, 2, 0 },
+                    new List<int>() { 1, 2, 0, 0 },
+                    new List<int>() { 0, 0, 1, 1 }
+                };
+                return new Tuple<bool, List<List<int>>>(true, output);
+            }
+            else
+            {
+                check = new List<List<int>>()
+                {
+                    new List<int>() { 0, 0, 0, 2 },
+                    new List<int>() { 0, 2, 2, 0 },
+                    new List<int>() { 0, 1, 0, 0 },
+                    new List<int>() { 1, 0, 0, 1 }
+                };
+            }
+
+            if (IsEqual(input, check))
+            {
+                output = new List<List<int>>()
+                {
+                    new List<int>() { 0, 0, 0, 2 },
+                    new List<int>() { 0, 2, 0, 0 },
+                    new List<int>() { 0, 1, 2, 0 },
+                    new List<int>() { 1, 0, 0, 1 }
+                };
+                return new Tuple<bool, List<List<int>>>(true, output);
+            }
+            else
+            {
+                check = new List<List<int>>()
+                {
+                    new List<int>() { 0, 0, 0, 2 },
+                    new List<int>() { 0, 2, 2, 0 },
+                    new List<int>() { 0, 0, 0, 1 },
+                    new List<int>() { 1, 1, 0, 0 }
+                };
+            }
+
+            if (IsEqual(input, check))
+            {
+                output = new List<List<int>>()
+                {
+                    new List<int>() { 0, 0, 0, 2 },
+                    new List<int>() { 0, 2, 0, 0 },
+                    new List<int>() { 0, 0, 2, 1 },
+                    new List<int>() { 1, 1, 0, 0 }
+                };
+                return new Tuple<bool, List<List<int>>>(true, output);
+            }
             #endregion
 
             return new Tuple<bool, List<List<int>>>(false, output);

@@ -342,7 +342,7 @@ namespace OctoPawn.States
                 }
             }
             //else if (IsComputerPlaying && (IsComputerFirst && IsWhitesTurn) || (!IsComputerFirst && !IsWhitesTurn))
-            
+            BoardState = UpdateBoard();
 
             foreach (var highlight in HighlightSquares)
             {
@@ -374,6 +374,43 @@ namespace OctoPawn.States
                         break;
                     }
                 }
+                //Double check board state
+                for(int i = 0; i < 4; i++)
+                {
+                    for(int j = 0; j < 4; j++)
+                    {
+                        if(BoardState[i][j] == 1)
+                        {
+                            try
+                            {
+                                if (BoardState[i - 1][j] == 0)
+                                    cantMove = false;
+                            }
+                            catch
+                            {
+                                //continue onward
+                            }
+                            try
+                            {
+                                if (BoardState[i - 1][j + 1] == 2)
+                                    cantMove = false;
+                            }
+                            catch
+                            {
+                                //continue onward
+                            }
+                            try
+                            {
+                                if (BoardState[i - 1][j - 1] == 2)
+                                    cantMove = false;
+                            }
+                            catch
+                            {
+                                //continue onward
+                            }
+                        }
+                    }
+                }
             }
             else
             {
@@ -386,6 +423,43 @@ namespace OctoPawn.States
                     {
                         cantMove = false;
                         break;
+                    }
+                }
+                //Double check board state
+                for (int i = 0; i < 4; i++)
+                {
+                    for (int j = 0; j < 4; j++)
+                    {
+                        if (BoardState[i][j] == 2)
+                        {
+                            try
+                            {
+                                if (BoardState[i + 1][j] == 0)
+                                    cantMove = false;
+                            }
+                            catch
+                            {
+                                //continue onward
+                            }
+                            try
+                            {
+                                if (BoardState[i + 1][j + 1] == 1)
+                                    cantMove = false;
+                            }
+                            catch
+                            {
+                                //continue onward
+                            }
+                            try
+                            {
+                                if (BoardState[i + 1][j - 1] == 1)
+                                    cantMove = false;
+                            }
+                            catch
+                            {
+                                //continue onward
+                            }
+                        }
                     }
                 }
             }
@@ -492,13 +566,30 @@ namespace OctoPawn.States
             spriteBatch.DrawString(font, text, position, color,
                     0, Vector2.Zero, new Vector2(game.WidthX(1.0f), game.HeightY(1.0f)), SpriteEffects.None, 0);
 
-            position = new Vector2(game.WidthX(25), game.HeightY(25));
-            spriteBatch.DrawString(font, "White Pawns:\n" + "     " + whitePawns.Count.ToString(), position, Color.White,
-                    0, Vector2.Zero, new Vector2(game.WidthX(1.0f), game.HeightY(1.0f)), SpriteEffects.None, 0);
+            //position = new Vector2(game.WidthX(25), game.HeightY(25));
+            //spriteBatch.DrawString(font, "White Pawns:\n" + "     " + whitePawns.Count.ToString(), position, Color.White,
+            //        0, Vector2.Zero, new Vector2(game.WidthX(1.0f), game.HeightY(1.0f)), SpriteEffects.None, 0);
 
-            position = new Vector2(game.WidthX(825), game.HeightY(25));
-            spriteBatch.DrawString(font, "Black Pawns:\n" + "     " + blackPawns.Count.ToString(), position, Color.Black,
-                    0, Vector2.Zero, new Vector2(game.WidthX(1.0f), game.HeightY(1.0f)), SpriteEffects.None, 0); ;
+            //position = new Vector2(game.WidthX(825), game.HeightY(25));
+            //spriteBatch.DrawString(font, "Black Pawns:\n" + "     " + blackPawns.Count.ToString(), position, Color.Black,
+            //        0, Vector2.Zero, new Vector2(game.WidthX(1.0f), game.HeightY(1.0f)), SpriteEffects.None, 0); ;
+
+            //FOR TESTING PURPOSES ONLY, DELETE AFTER FINISHED
+            //for(int i = 0; i < 4; i++)
+            //{
+            //    for(int j = 0; j < 4; j++)
+            //    {
+            //        spriteBatch.DrawRectangle(new RectangleF((25 * (j + 1)), 100 + (25 * (i + 1)), 25, 25), Color.Gray);
+            //        if (BoardState[i][j] == 1)
+            //        {
+            //            spriteBatch.FillRectangle(new RectangleF((25 * (j + 1)), 100 + (25 * (i + 1)), 25, 25), Color.White);
+            //        }
+            //        if (BoardState[i][j] == 2)
+            //        {
+            //            spriteBatch.FillRectangle(new RectangleF((25 * (j + 1)), 100 + (25 * (i + 1)), 25, 25), Color.Black);
+            //        }
+            //    }
+            //}
 
             if (!IsValidMove)
             {
