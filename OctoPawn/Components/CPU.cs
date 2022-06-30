@@ -240,26 +240,6 @@ namespace OctoPawn.Components
             }
 
             var bestBoardOutcome = allBoardCombos.OrderByDescending(x => x.GetWeight()).ToList();
-            string stuff = "";
-            foreach(var board in allBoardCombos)
-            {
-                float x = board.Outcomes.Item1 / board.Outcomes.Item2;
-                stuff += allBoardCombos.IndexOf(board).ToString() + "\n";
-                stuff += board.GetWeight().ToString() + "\n";
-                stuff += board.Outcomes.Item1.ToString() + "\n";
-                stuff += board.Outcomes.Item2.ToString() + "\n";
-                for (int i = 0; i < 4; i++)
-                {
-                    for (var j = 0; j < 4; j++)
-                    {
-                        stuff += board.Board[i][j].ToString() + ",";
-                    }
-                    stuff += "\n";
-                }
-
-                stuff += "\n\n";
-            }
-            System.IO.File.WriteAllText(@"C:\Users\Matthew\source\repos\OctoPawn\OctoPawn\bin\Debug\netcoreapp3.1\state1.txt", stuff);
             return bestBoardOutcome[0].Board;
         }
 
